@@ -70,7 +70,9 @@ if st.button("Speichern"):
             """
         )
         del st.session_state.wunschliste_df
+        st.cache_data.clear()
         time.sleep(3)
         st.rerun()
     conn.update(worksheet="wunschliste", data=wunschliste_bearbeitet_df)
+    st.cache_data.clear()
             
