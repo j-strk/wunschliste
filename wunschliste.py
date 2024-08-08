@@ -16,15 +16,15 @@ st.set_page_config(layout='wide')
 
 # %% Passwort-Abfrage
 
-@st.dialog("Passwort eingeben")
-def passwortabfrage():
-    passworteingabe = st.text_input(label="...", label_visibility="collapsed")
-    if passworteingabe in [st.secrets.passwort, st.secrets.passwort_edit]:
-        st.session_state.passwort = passworteingabe
-        st.rerun()
-    
-if "passwort" not in st.session_state:
-    passwortabfrage()
+#@st.dialog("Passwort eingeben")
+#def passwortabfrage():
+#    passworteingabe = st.text_input(label="...", label_visibility="collapsed")
+#    if passworteingabe in [st.secrets.passwort, st.secrets.passwort_edit]:
+#        st.session_state.passwort = passworteingabe
+#        st.rerun()
+#    
+#if "passwort" not in st.session_state:
+#    passwortabfrage()
 
 
 # %% Titel und Hinweise schreiben
@@ -72,5 +72,5 @@ if st.button("Speichern"):
         del st.session_state.wunschliste_df
         time.sleep(3)
         st.rerun()
-    conn.update(worksheet="Tabellenblatt1", data=wunschliste_bearbeitet_df)
+    conn.update(worksheet="wunschliste", data=wunschliste_bearbeitet_df)
             
