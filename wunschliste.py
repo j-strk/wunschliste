@@ -24,15 +24,20 @@ def seite_neu_laden():
 
 # %% Passwort-Abfrage
 
-#@st.dialog("Passwort eingeben")
-#def passwortabfrage():
-#    passworteingabe = st.text_input(label="...", label_visibility="collapsed")
-#    if passworteingabe in [st.secrets.passwort, st.secrets.passwort_edit]:
-#        st.session_state.passwort = passworteingabe
-#        st.rerun()
-#    
-#if "passwort" not in st.session_state:
-#    passwortabfrage()
+if "passwort" not in st.session_state:
+    s1, s2 = st.columns(2)
+    passworteingabe = s1.text_input(
+        label="...",
+        label_visibility="collapsed",
+        placeholder="Passwort eingeben"
+    )
+    if passworteingabe != "" or s2.button("OK"):
+        if passworteingabe in [st.secrets.passwort, st.secrets.passwort_edit]:
+            st.session_state.passwort = passworteingabe
+            st.rerun()
+        else:
+            st.write("Passwort nicht korrekt...")
+    st.stop()
 
 
 # %% Titel und Hinweise schreiben
