@@ -109,6 +109,15 @@ if st.button("Speichern"):
         )
         time.sleep(3)
         seite_neu_laden()
+    
+    if st.session_state.passwort == st.secrets.passwort_edit:
+        if [wunsch, link] != ["", ""]:
+            wunschliste_bearbeitet_df = pd.concat(
+                (wunschliste_bearbeitet_df, pd.DataFrame({"Wunsch": [wunsch],
+                                                          "Link": [link],
+                                                          "wird verschenkt von": [" "]}))
+                )
+    
     conn_neu.update(worksheet="wunschliste", data=wunschliste_bearbeitet_df)
     seite_neu_laden()
             
