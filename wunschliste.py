@@ -62,11 +62,18 @@ wunschliste_df = st.session_state.wunschliste_df
 
 # %% st.data_editor anzeigen
 
+if st.session_state.passwort == st.secrets.passwort_edit:
+    wunschliste_data_editor_df = wunschliste_df[["Wunsch", "Link"]]
+    disabled = []
+else:
+    wunschliste_data_editor_df = wunschliste_df
+    disabled = ["Wunsch", "Link"]
+
 wunschliste_bearbeitet_df = st.data_editor(
-    wunschliste_df,
+    wunschliste_data_editor_df,
     hide_index=True,
     use_container_width=True,
-    disabled=["Wunsch", "Link"],
+    disabled=disabled,
     column_config={
         "Link": st.column_config.LinkColumn()#display_text="Hier klicken")
     }
