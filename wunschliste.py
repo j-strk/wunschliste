@@ -72,6 +72,7 @@ wunschliste_bearbeitet_df = st.data_editor(
 # %% Speichern
 
 if st.button("Speichern"):
+    st.cache_data.clear()
     conn_neu = st.connection("gsheets", type=GSheetsConnection, ttl=5)
     wunschliste_neu_eingelesen_df = conn_neu.read(worksheet="wunschliste")
     if not wunschliste_df.equals(wunschliste_neu_eingelesen_df):
