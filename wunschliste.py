@@ -14,6 +14,14 @@ import time
 st.set_page_config(layout='wide')
 
 
+# %% Funktionen
+
+def seite_neu_laden():
+    del st.session_state.wunschliste_df
+    st.cache_data.clear()
+    st.rerun()
+    
+
 # %% Passwort-Abfrage
 
 #@st.dialog("Passwort eingeben")
@@ -73,10 +81,8 @@ if st.button("Speichern"):
             Deswegen wird die Seite neu geladen...
             """
         )
-        del st.session_state.wunschliste_df
-        st.cache_data.clear()
         time.sleep(3)
-        st.rerun()
+        seite_neu_laden()
     conn_neu.update(worksheet="wunschliste", data=wunschliste_bearbeitet_df)
-    st.cache_data.clear()
+    seite_neu_laden()
             
