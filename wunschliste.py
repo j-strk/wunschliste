@@ -80,6 +80,19 @@ wunschliste_bearbeitet_df = st.data_editor(
 )
 
 
+# %% Neuen Wunsch ergänzen (edit)
+
+if st.session_state.passwort == st.secrets.passwort_edit:
+    st.write("---")
+    st.header("Wunsch ergänzen")
+    wunsch = st.text_input(
+        label="Wunsch:"
+    )
+    link = st.text_input(
+        label="Link:"
+    )
+    st.write("---")
+
 
 # %% Speichern
 
