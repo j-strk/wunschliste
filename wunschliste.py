@@ -43,16 +43,20 @@ st.write(
 if "wunschliste_df" not in st.session_state:
     conn = st.connection("gsheets", type=GSheetsConnection, ttl=5)
     st.session_state.wunschliste_df = conn.read(worksheet="wunschliste")
+
+wunschliste_df = st.session_state.wunschliste_df
     
 
 # %% st.data_editor anzeigen
 
 wunschliste_bearbeitet_df = st.data_editor(
-    st.session_state.wunschliste_df,
+    wunschliste_df,
     hide_index=True,
     use_container_width=True,
     disabled=["Wunsch", "Link"],
-    column_config={"Link": st.column_config.LinkColumn(display_text="Hier klicken")}
+    column_config={
+        "Link": st.column_config.LinkColumn()#display_text="Hier klicken")
+    }
 )
 
 
@@ -60,9 +64,9 @@ wunschliste_bearbeitet_df = st.data_editor(
 # %% Speichern
 
 if st.button("Speichern"):
-    conn = st.connection("gsheets", type=GSheetsConnection, ttl=5)
-    wunschliste_erneut_eingelesen_df = conn.read(worksheet="wunschliste")
-    if not st.session_state.wunschliste_df.equals(wunschliste_erneut_eingelesen_df):
+    conn_neu = st.connection("gsheets", type=GSheetsConnection, ttl=5)
+    wunschliste_neu_eingelesen_df = conn_neu.read(worksheet="wunschliste")
+    if not wunschliste_df.equals(wunschliste_neu_eingelesen_df):
         st.write(
             """
             Die Wunschliste wurde in der Zwischenzeit verändert.
@@ -73,6 +77,6 @@ if st.button("Speichern"):
         st.cache_data.clear()
         time.sleep(3)
         st.rerun()
-    conn.update(worksheet="wunschliste", data=wunschliste_bearbeitet_df)
+    conn_neu.update(worksheet="wunschliste", data=wunschliste_bearbeitet_df)
     st.cache_data.clear()
             
