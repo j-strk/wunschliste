@@ -55,7 +55,7 @@ st.write(
 
 if "wunschliste_df" not in st.session_state:
     conn = st.connection("gsheets", type=GSheetsConnection, ttl=5)
-    st.session_state.wunschliste_df = conn.read(worksheet="wunschliste").astype("string")
+    st.session_state.wunschliste_df = conn.read(worksheet="wunschliste").astype("string").fillna(" ")
     
 wunschliste_df = st.session_state.wunschliste_df
    
@@ -99,7 +99,7 @@ if st.session_state.passwort == st.secrets.passwort_edit:
 if st.button("Speichern"):
     st.cache_data.clear()
     conn_neu = st.connection("gsheets", type=GSheetsConnection, ttl=5)
-    wunschliste_neu_eingelesen_df = conn_neu.read(worksheet="wunschliste").astype("string")
+    wunschliste_neu_eingelesen_df = conn_neu.read(worksheet="wunschliste").astype("string").fillna(" ")
     if not wunschliste_df.equals(wunschliste_neu_eingelesen_df):
         st.write(
             """
