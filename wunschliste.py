@@ -87,10 +87,12 @@ if st.session_state.passwort == st.secrets.passwort_edit:
     st.write("---")
     st.header("Wunsch ergänzen")
     wunsch = st.text_input(
-        label="Wunsch:"
+        label="Wunsch:",
+        placeholder=""
     )
     link = st.text_input(
-        label="Link:"
+        label="Link:",
+        placeholder=""
     )
     st.write("---")
 
