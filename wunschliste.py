@@ -128,10 +128,7 @@ if st.button("Speichern"):
                 ),
                 ignore_index=True
             )
-        wunschliste_bearbeitet_df.dropna(
-            subset="Wunsch",
-            inplace=True
-        )
+        wunschliste_bearbeitet_df = wunschliste_bearbeitet_df[wunschliste_bearbeitet_df["Wunsch"] != ""]
         wunschliste_bearbeitet_df.fillna(
             " ",
             inplace=True
