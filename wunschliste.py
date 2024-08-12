@@ -87,21 +87,43 @@ wunschliste_bearbeitet_df = wunschliste_df.copy()
 st.write("---")
 
 key = 0
-for index, zeile in wunschliste_bearbeitet_df.iterrows():
-    st.subheader(zeile["Wunsch"])
-    if zeile["Beschreibung"].strip() != "":
-        st.markdown(zeile["Beschreibung"])
-    if zeile["Link"].strip() != "":
-        st.link_button("Details", zeile["Link"])
-    s1, s2 = st.columns(2)
-    wunschliste_bearbeitet_df.at[index, "wird verschenkt von"] = s1.text_input(
-        label="wird verschenkt von:", 
-        value=zeile["wird verschenkt von"],
-        placeholder="", 
-        key=key
-    )
-    key += 1
-    st.write("---")
+if st.session_state.passwort == st.secrets.passwort_edit:
+    for index, zeile in wunschliste_bearbeitet_df.iterrows():
+        wunschliste_bearbeitet_df.at[index, "Wunsch"] = st.text_input(
+            label="Wunsch:",
+            value=zeile["Wunsch"],
+            key=key
+        )
+        key += 1
+        wunschliste_bearbeitet_df.at[index, "Beschreibung"] = st.text_area(
+            label="Beschreibung:",
+            value=zeile["Beschreibung"],
+            key=key
+        )
+        key += 1
+        wunschliste_bearbeitet_df.at[index, "Link"] = st.text_input(
+            label="Link:",
+            value=zeile["Link"],
+            key=key
+        )
+        key += 1
+        st.write("---")
+else:
+    for index, zeile in wunschliste_bearbeitet_df.iterrows():
+        st.subheader(zeile["Wunsch"])
+        if zeile["Beschreibung"].strip() != "":
+            st.markdown(zeile["Beschreibung"])
+        if zeile["Link"].strip() != "":
+            st.link_button("Details", zeile["Link"])
+        s1, s2 = st.columns(2)
+        wunschliste_bearbeitet_df.at[index, "wird verschenkt von"] = s1.text_input(
+            label="wird verschenkt von:", 
+            value=zeile["wird verschenkt von"],
+            placeholder="", 
+            key=key
+            )
+        key += 1
+        st.write("---")
     
 
 # %% Neuen Wunsch ergänzen (edit)
