@@ -61,25 +61,10 @@ wunschliste_df = st.session_state.wunschliste_df
 wunschliste_bearbeitet_df = wunschliste_df.copy()
    
 
-# %% st.data_editor anzeigen
+# %% ggf. Link-Button zur Emoji-Liste anzeigen
 
-# if st.session_state.passwort == st.secrets.passwort_edit:
-#     column_order = ["Wunsch", "Link"]
-#     disabled = []
-# else:
-#     column_order = wunschliste_df.columns.to_list()
-#     disabled = ["Wunsch", "Link"]
-
-# wunschliste_bearbeitet_df = st.data_editor(
-#     wunschliste_df,
-#     hide_index=True,
-#     use_container_width=True,
-#     column_order=column_order,
-#     disabled=disabled,
-#     column_config={
-#         "Link": st.column_config.LinkColumn()#display_text="Hier klicken")
-#     }
-# )
+if st.session_state.passwort == st.secrets.passwort_edit:
+    st.link_button("Emojis", "https://gist.github.com/rxaviers/7360908")
 
 
 # %% alle Wünsche nacheinander auflisten
