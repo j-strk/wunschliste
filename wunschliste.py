@@ -43,10 +43,10 @@ if "passwort" not in st.session_state:
 # %% Titel und Hinweise schreiben
 
 st.title("Wunschliste von Johannes")
-st.write(
+st.markdown(
     """
-    Falls du dich für einen Wunsch aus der Liste entschieden hast, trag bitte deinen Namen in der entsprechenden Zeile ein.\n
-    Klicke anschließend auf "Speichern" am Ende dieser Seite.
+    Falls du dich für einen Wunsch aus der Liste entschieden hast, trag bitte deinen Namen in das entsprechende Feld ein.\n
+    Klicke anschließend auf **Speichern** am Ende dieser Seite.
     """
 )
 
@@ -58,28 +58,51 @@ if "wunschliste_df" not in st.session_state:
     st.session_state.wunschliste_df = conn.read(worksheet="wunschliste").astype("string").fillna(" ")
     
 wunschliste_df = st.session_state.wunschliste_df
+wunschliste_bearbeitet_df = wunschliste_df.copy()
    
 
 # %% st.data_editor anzeigen
 
-if st.session_state.passwort == st.secrets.passwort_edit:
-    column_order = ["Wunsch", "Link"]
-    disabled = []
-else:
-    column_order = wunschliste_df.columns.to_list()
-    disabled = ["Wunsch", "Link"]
+# if st.session_state.passwort == st.secrets.passwort_edit:
+#     column_order = ["Wunsch", "Link"]
+#     disabled = []
+# else:
+#     column_order = wunschliste_df.columns.to_list()
+#     disabled = ["Wunsch", "Link"]
 
-wunschliste_bearbeitet_df = st.data_editor(
-    wunschliste_df,
-    hide_index=True,
-    use_container_width=True,
-    column_order=column_order,
-    disabled=disabled,
-    column_config={
-        "Link": st.column_config.LinkColumn()#display_text="Hier klicken")
-    }
-)
+# wunschliste_bearbeitet_df = st.data_editor(
+#     wunschliste_df,
+#     hide_index=True,
+#     use_container_width=True,
+#     column_order=column_order,
+#     disabled=disabled,
+#     column_config={
+#         "Link": st.column_config.LinkColumn()#display_text="Hier klicken")
+#     }
+# )
 
+
+# %% alle Wünsche nacheinander auflisten
+
+st.write("---")
+
+key = 0
+for index, zeile in wunschliste_bearbeitet_df.iterrows():
+    st.subheader(zeile["Wunsch"])
+    if zeile["Beschreibung"].strip() != "":
+        st.markdown(zeile["Beschreibung"])
+    if zeile["Link"].strip() != "":
+        st.link_button("Details", zeile["Link"])
+    s1, s2 = st.columns(2)
+    wunschliste_bearbeitet_df.at[index, "wird verschenkt von"] = s1.text_input(
+        label="wird verschenkt von:", 
+        value=zeile["wird verschenkt von"],
+        placeholder="", 
+        key=key
+    )
+    key += 1
+    st.write("---")    #########################
+    
 
 # %% Neuen Wunsch ergänzen (edit)
 
