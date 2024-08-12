@@ -101,16 +101,19 @@ for index, zeile in wunschliste_bearbeitet_df.iterrows():
         key=key
     )
     key += 1
-    st.write("---")    #########################
+    st.write("---")
     
 
 # %% Neuen Wunsch ergänzen (edit)
 
 if st.session_state.passwort == st.secrets.passwort_edit:
-    st.write("---")
     st.header("Wunsch ergänzen")
     wunsch = st.text_input(
         label="Wunsch:",
+        placeholder=""
+    )
+    beschreibung = st.text_area(
+        label="Beschreibung:",
         placeholder=""
     )
     link = st.text_input(
@@ -137,13 +140,14 @@ if st.button("Speichern"):
         seite_neu_laden()
     
     if st.session_state.passwort == st.secrets.passwort_edit:
-        if [wunsch, link] != ["", ""]:
+        if wunsch != "":
             wunschliste_bearbeitet_df = pd.concat(
                 (
                     wunschliste_bearbeitet_df, 
                     pd.DataFrame(
                         {
                             "Wunsch": [wunsch],
+                            "Beschreibung": [beschreibung],
                             "Link": [link],
                             "wird verschenkt von": [" "]
                         }
