@@ -31,6 +31,7 @@ if "passwort" not in st.session_state:
         label_visibility="collapsed",
         placeholder="Passwort eingeben"
     )
+    passworteingabe = passworteingabe.strip()
     if passworteingabe != "" or s2.button("OK"):
         if passworteingabe in [st.secrets.passwort, st.secrets.passwort_edit]:
             st.session_state.passwort = passworteingabe
