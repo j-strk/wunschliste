@@ -56,7 +56,7 @@ st.markdown(
 
 if "wunschliste_df" not in st.session_state:
     conn = st.connection("gsheets", type=GSheetsConnection, ttl=5)
-    st.session_state.wunschliste_df = conn.read(worksheet="wunschliste").astype("string").fillna(" ")
+    st.session_state.wunschliste_df = conn.read(worksheet="wunschliste").astype("string").fillna("")
     
 wunschliste_df = st.session_state.wunschliste_df
 wunschliste_bearbeitet_df = wunschliste_df.copy()
@@ -101,14 +101,17 @@ else:
             st.markdown(zeile["Beschreibung"])
         if zeile["Link"].strip() != "":
             st.link_button("Details", zeile["Link"])
-        s1, s2 = st.columns(2)
-        wunschliste_bearbeitet_df.at[index, "wird verschenkt von"] = s1.text_input(
-            label="wird verschenkt von:", 
-            value=zeile["wird verschenkt von"],
-            placeholder="", 
-            key=key
+        if zeile["wird verschenkt von"].strip() == "":
+            s1, s2 = st.columns(2)
+            wunschliste_bearbeitet_df.at[index, "wird verschenkt von"] = s1.text_input(
+                label="wird verschenkt von:", 
+                value=zeile["wird verschenkt von"],
+                placeholder="", 
+                key=index
             )
-        key += 1
+            key += 1
+        else:
+            st.write(":warning: Dieser Wunsch wurde schon von jemandem ausgewählt!")
         st.write("---")
     
 
@@ -136,7 +139,7 @@ if st.session_state.passwort == st.secrets.passwort_edit:
 if st.button("Speichern"):
     st.cache_data.clear()
     conn_neu = st.connection("gsheets", type=GSheetsConnection, ttl=5)
-    wunschliste_neu_eingelesen_df = conn_neu.read(worksheet="wunschliste").astype("string").fillna(" ")
+    wunschliste_neu_eingelesen_df = conn_neu.read(worksheet="wunschliste").astype("string").fillna("")
     if not wunschliste_df.equals(wunschliste_neu_eingelesen_df):
         st.write(
             """
