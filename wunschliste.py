@@ -108,11 +108,11 @@ else:
             st.markdown(zeile["Beschreibung"])
         if zeile["Link"].strip() != "":
             st.link_button("Details", zeile["Link"])
-        if zeile["wird verschenkt von"].strip() == "":
+        if zeile["Name"].strip() == "":
             s1, s2 = st.columns(2)
-            wunschliste_bearbeitet_df.at[index, "wird verschenkt von"] = s1.text_input(
-                label="wird verschenkt von:", 
-                value=zeile["wird verschenkt von"],
+            wunschliste_bearbeitet_df.at[index, "Name"] = s1.text_input(
+                label="Name:", 
+                value=zeile["Name"],
                 placeholder="", 
                 key="text_input_name_" + str(index)
             )
@@ -122,7 +122,7 @@ else:
             expanded = True if index in st.session_state.namensloeschung_dct.keys() else False
             with s1.expander("Ich hab's mir anders überlegt", expanded=expanded):
                 st.session_state.namensloeschung_dct[index] = st.text_input(
-                    label="Trage hier deinen Namen ein:",
+                    label="Name:",
                     value="",
                     key="text_input_namensloeschung_" + str(index)
                 )
@@ -169,8 +169,8 @@ if st.button("Speichern", type="primary"):
     # ggf. Namen löschen
     ungueltige_namenseingabe = False
     for index, name in st.session_state.namensloeschung_dct.items():
-        if name.strip().lower() == wunschliste_bearbeitet_df.at[index, "wird verschenkt von"].strip().lower():
-            wunschliste_bearbeitet_df.at[index, "wird verschenkt von"] = ""
+        if name.strip().lower() == wunschliste_bearbeitet_df.at[index, "Name"].strip().lower():
+            wunschliste_bearbeitet_df.at[index, "Name"] = ""
         else:
             ungueltige_namenseingabe = True
             st.write(
@@ -192,7 +192,7 @@ if st.button("Speichern", type="primary"):
                             "Wunsch": [wunsch],
                             "Beschreibung": [beschreibung],
                             "Link": [link],
-                            "wird verschenkt von": [" "]
+                            "Name": [" "]
                         }
                     )
                 ),
