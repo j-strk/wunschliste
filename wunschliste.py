@@ -11,7 +11,10 @@ import time
 
 # %% Seite konfigurieren
 
-st.set_page_config(layout='wide')
+st.set_page_config(
+    layout='wide',
+    page_icon=":gift:"
+)
 
 
 # %% Funktionen
@@ -46,7 +49,7 @@ if "passwort" not in st.session_state:
 st.title("Wunschliste von Johannes")
 st.markdown(
     """
-    Falls du dich für einen Wunsch aus der Liste entschieden hast, trag bitte deinen Namen in das entsprechende Feld ein.\n
+    Falls du dich für einen Wunsch aus der Liste entschieden hast, trage bitte deinen Namen in das entsprechende Feld ein.\n
     Klicke anschließend auf **Speichern** am Ende dieser Seite.
     """
 )
