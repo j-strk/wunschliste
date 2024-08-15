@@ -73,7 +73,16 @@ if st.session_state.passwort == st.secrets.passwort_edit:
 
 if "namensloeschung_dct" not in st.session_state:
     st.session_state.namensloeschung_dct = {}
-    
+
+
+# %% Toggle Button einfügen, der festlegt, ob nur offene Wünsche oder alle angezeigt werden sollen
+
+st.write("  ")
+nur_offene_wuensche_anzeigen = st.toggle(
+    label="Nur Wünsche anzeigen, die von niemandem ausgewählt wurden",
+    value=True
+)    
+
 
 # %% alle Wünsche nacheinander auflisten
 
@@ -103,6 +112,9 @@ if st.session_state.passwort == st.secrets.passwort_edit:
         st.write("---")
 else:
     for index, zeile in wunschliste_bearbeitet_df.iterrows():
+        if nur_offene_wuensche_anzeigen and zeile["Name"].strip() != "":
+            continue
+        
         st.subheader(zeile["Wunsch"])
         if zeile["Beschreibung"].strip() != "":
             st.markdown(zeile["Beschreibung"])
