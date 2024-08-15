@@ -54,8 +54,8 @@ st.markdown(
 
 # %% Datenbank laden
 
+conn = st.connection("gsheets", type=GSheetsConnection, ttl=5)
 if "wunschliste_df" not in st.session_state:
-    conn = st.connection("gsheets", type=GSheetsConnection, ttl=5)
     st.session_state.wunschliste_df = conn.read(worksheet="wunschliste").astype("string").fillna("")
     
 wunschliste_df = st.session_state.wunschliste_df
@@ -67,6 +67,13 @@ wunschliste_bearbeitet_df = wunschliste_df.copy()
 if st.session_state.passwort == st.secrets.passwort_edit:
     st.link_button("Emojis", "https://gist.github.com/rxaviers/7360908")
 
+
+# %% Dictionary definieren, in das ggf. die Inidzes gespeichert werden, bei denen die Namen gelöscht werden sollen
+#    Form: {index: Name, ...}
+
+if "namensloeschung_dct" not in st.session_state:
+    st.session_state.namensloeschung_dct = {}
+    
 
 # %% alle Wünsche nacheinander auflisten
 
@@ -107,11 +114,20 @@ else:
                 label="wird verschenkt von:", 
                 value=zeile["wird verschenkt von"],
                 placeholder="", 
-                key=index
+                key="text_input_name_" + str(index)
             )
-            key += 1
         else:
             st.write(":warning: Dieser Wunsch wurde schon von jemandem ausgewählt!")
+            s1, s2 = st.columns(2)
+            expanded = True if index in st.session_state.namensloeschung_dct.keys() else False
+            with s1.expander("Ich hab's mir anders überlegt", expanded=expanded):
+                st.session_state.namensloeschung_dct[index] = st.text_input(
+                    label="Trage hier deinen Namen ein:",
+                    value="",
+                    key="text_input_namensloeschung_" + str(index)
+                )
+                st.markdown("Nach einem Klick auf **Speichern** (unten) wird deine Auswahl gelöscht")
+                    
         st.write("---")
     
 
@@ -136,7 +152,7 @@ if st.session_state.passwort == st.secrets.passwort_edit:
 
 # %% Speichern
 
-if st.button("Speichern"):
+if st.button("Speichern", type="primary"):
     st.cache_data.clear()
     conn_neu = st.connection("gsheets", type=GSheetsConnection, ttl=5)
     wunschliste_neu_eingelesen_df = conn_neu.read(worksheet="wunschliste").astype("string").fillna("")
@@ -149,6 +165,22 @@ if st.button("Speichern"):
         )
         time.sleep(3)
         seite_neu_laden()
+    
+    # ggf. Namen löschen
+    ungueltige_namenseingabe = False
+    for index, name in st.session_state.namensloeschung_dct.items():
+        if name.strip().lower() == wunschliste_bearbeitet_df.at[index, "wird verschenkt von"].strip().lower():
+            wunschliste_bearbeitet_df.at[index, "wird verschenkt von"] = ""
+        else:
+            ungueltige_namenseingabe = True
+            st.write(
+                "Der für die Löschung angegebene Name beim Wunsch \"" + 
+                wunschliste_bearbeitet_df.at[index, "Wunsch"] + 
+                "\" stimmt nicht mit dem gespeicherten Namen in der Datenbank überein!"
+            )
+    del st.session_state.namensloeschung_dct
+    if ungueltige_namenseingabe:
+        time.sleep(3)
     
     if st.session_state.passwort == st.secrets.passwort_edit:
         if wunsch != "":
@@ -167,10 +199,7 @@ if st.button("Speichern"):
                 ignore_index=True
             )
         wunschliste_bearbeitet_df = wunschliste_bearbeitet_df[wunschliste_bearbeitet_df["Wunsch"] != ""]
-        wunschliste_bearbeitet_df.fillna(
-            " ",
-            inplace=True
-        )
+        wunschliste_bearbeitet_df.fillna("", inplace=True)
             
     
     conn_neu.update(worksheet="wunschliste", data=wunschliste_bearbeitet_df)
