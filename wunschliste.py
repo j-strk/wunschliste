@@ -124,8 +124,7 @@ else:
             s1, s2 = st.columns(2)
             wunschliste_bearbeitet_df.at[index, "Name"] = s1.text_input(
                 label="Name:", 
-                value=zeile["Name"],
-                placeholder="", 
+                value=zeile["Name"], 
                 key="text_input_name_" + str(index)
             )
         else:
@@ -149,15 +148,15 @@ if st.session_state.passwort == st.secrets.passwort_edit:
     st.header("Wunsch ergänzen")
     wunsch = st.text_input(
         label="Wunsch:",
-        placeholder=""
+        value=""
     )
     beschreibung = st.text_area(
         label="Beschreibung:",
-        placeholder=""
+        value=""
     )
     link = st.text_input(
         label="Link:",
-        placeholder=""
+        value=""
     )
     st.write("---")
 
