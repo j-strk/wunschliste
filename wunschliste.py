@@ -25,6 +25,11 @@ def seite_neu_laden():
     st.rerun()
     
 
+# %% Query-Parameter definieren
+
+name_wunschliste = st.query_params.name
+
+
 # %% Passwort-Abfrage
 
 if "passwort" not in st.session_state:
@@ -59,7 +64,7 @@ st.markdown(
 
 conn = st.connection("gsheets", type=GSheetsConnection, ttl=5)
 if "wunschliste_df" not in st.session_state:
-    st.session_state.wunschliste_df = conn.read(worksheet="wunschliste").astype("string").fillna("")
+    st.session_state.wunschliste_df = conn.read(worksheet=name_wunschliste.title()).astype("string").fillna("")
     
 wunschliste_df = st.session_state.wunschliste_df
 wunschliste_bearbeitet_df = wunschliste_df.copy()
@@ -169,7 +174,7 @@ if st.session_state.passwort == st.secrets.passwort_edit:
 if st.button("Speichern", type="primary"):
     st.cache_data.clear()
     conn_neu = st.connection("gsheets", type=GSheetsConnection, ttl=5)
-    wunschliste_neu_eingelesen_df = conn_neu.read(worksheet="wunschliste").astype("string").fillna("")
+    wunschliste_neu_eingelesen_df = conn_neu.read(worksheet=name_wunschliste.title()).astype("string").fillna("")
     if not wunschliste_df.equals(wunschliste_neu_eingelesen_df):
         st.write(
             """
@@ -216,6 +221,6 @@ if st.button("Speichern", type="primary"):
         wunschliste_bearbeitet_df.fillna("", inplace=True)
             
     
-    conn_neu.update(worksheet="wunschliste", data=wunschliste_bearbeitet_df)
+    conn_neu.update(worksheet=name_wunschliste.title(), data=wunschliste_bearbeitet_df)
     seite_neu_laden()
             
