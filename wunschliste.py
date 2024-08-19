@@ -65,7 +65,7 @@ if "passwort" not in st.session_state:
 
 # %% Titel und Hinweise schreiben
 
-st.title("Wunschliste von Johannes")
+st.title("Wunschliste von " + name_wunschliste.title())
 st.markdown(
     """
     Falls du dich für einen Wunsch aus der Liste entschieden hast, trage bitte deinen Namen in das entsprechende Feld ein.\n
