@@ -27,10 +27,22 @@ def seite_neu_laden():
 
 # %% Query-Parameter definieren
 
-name_wunschliste = st.query_params.name
+try:
+    name_wunschliste = st.query_params.name
+    name_wunschliste = name_wunschliste.lower()
+except AttributeError:
+    st.write(":warning: Bitte gib in der URL an, wessen Wunschliste angezeigt werden soll (.../?name=)")
+    st.stop()
 
+if name_wunschliste.replace("_edit", "") not in st.secrets.passwoerter.keys():
+    st.write(":warning: Der angegebene Name " + name_wunschliste + " ist ungültig!")
+    st.stop()
+    
 
 # %% Passwort-Abfrage
+
+if "edit" not in st.session_state:
+    st.session_state.edit = False
 
 if "passwort" not in st.session_state:
     s1, s2 = st.columns(2)
@@ -41,8 +53,10 @@ if "passwort" not in st.session_state:
     )
     passworteingabe = passworteingabe.strip()
     if passworteingabe != "" or s2.button("OK"):
-        if passworteingabe in [st.secrets.passwort, st.secrets.passwort_edit]:
+        if passworteingabe in [st.secrets.passwoerter[name_wunschliste], st.secrets.passwoerter[name_wunschliste + "_edit"]]:
             st.session_state.passwort = passworteingabe
+            if passworteingabe == st.secrets.passwoerter[name_wunschliste + "_edit"]:
+                st.session_state.edit = True
             st.rerun()
         else:
             st.write("Passwort nicht korrekt...")
@@ -72,7 +86,7 @@ wunschliste_bearbeitet_df = wunschliste_df.copy()
 
 # %% ggf. Link-Button zur Emoji-Liste anzeigen
 
-if st.session_state.passwort == st.secrets.passwort_edit:
+if st.session_state.edit:
     st.link_button("Emojis", "https://gist.github.com/rxaviers/7360908")
 
 
@@ -85,11 +99,14 @@ if "namensloeschung_dct" not in st.session_state:
 
 # %% Toggle Button einfügen, der festlegt, ob nur offene Wünsche oder alle angezeigt werden sollen
 
-st.write("  ")
-nur_offene_wuensche_anzeigen = st.toggle(
-    label="Nur Wünsche anzeigen, die von niemandem ausgewählt wurden",
-    value=True
-)    
+if st.session_state.edit:
+    nur_offene_wuensche_anzeigen = False
+else:
+    st.write("  ")
+    nur_offene_wuensche_anzeigen = st.toggle(
+        label="Nur Wünsche anzeigen, die von niemandem ausgewählt wurden",
+        value=True
+    )    
 
 
 # %% alle Wünsche nacheinander auflisten
@@ -97,7 +114,7 @@ nur_offene_wuensche_anzeigen = st.toggle(
 st.write("---")
 
 key = 0
-if st.session_state.passwort == st.secrets.passwort_edit:
+if st.session_state.edit:
     for index, zeile in wunschliste_bearbeitet_df.iterrows():
         wunschliste_bearbeitet_df.at[index, "Wunsch"] = st.text_input(
             label="Wunsch:",
@@ -152,7 +169,7 @@ else:
 
 # %% Neuen Wunsch ergänzen (edit)
 
-if st.session_state.passwort == st.secrets.passwort_edit:
+if st.session_state.edit:
     st.header("Wunsch ergänzen")
     wunsch = st.text_input(
         label="Wunsch:",
@@ -201,7 +218,7 @@ if st.button("Speichern", type="primary"):
     if ungueltige_namenseingabe:
         time.sleep(3)
     
-    if st.session_state.passwort == st.secrets.passwort_edit:
+    if st.session_state.edit:
         if wunsch != "":
             wunschliste_bearbeitet_df = pd.concat(
                 (
