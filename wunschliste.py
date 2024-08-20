@@ -16,6 +16,17 @@ st.set_page_config(
     page_icon=":gift:"
 )
 
+# Menü und "Made with Streamlit" etnfernen
+st.markdown(
+    """
+    <style>
+    #MainMenu {visbility: hidden;}
+    footer {visbility: hidden;}
+    </style>
+    """,
+    unsafe_allow_html=True    
+)
+
 
 # %% Funktionen
 
