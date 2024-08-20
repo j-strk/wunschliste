@@ -77,12 +77,25 @@ if "passwort" not in st.session_state:
 # %% Titel und Hinweise schreiben
 
 st.title("Wunschliste von " + name_wunschliste.title())
-st.markdown(
-    """
-    Falls du dich für einen Wunsch aus der Liste entschieden hast, trage bitte deinen Namen in das entsprechende Feld ein.\n
-    Klicke anschließend auf **Speichern** am Ende dieser Seite.
-    """
-)
+if st.session_state.edit:
+    st.markdown(
+        """
+        **Hinweise zur Nutzung:**\n
+        - Wenn du einen Wunsch mit einem \"#\" beginnend einträgst, wird er in der Datenbank gespeichert,
+          ist aber für die Nutzer der App unsichtbar.
+        - Du kannst einen bestehenden Wunsch löschen, indem du den Titel des Wunsches löschst und anschließend auf
+          **Speichern** klickst.\n
+        Falls du Emojis verwenden möchtest, kannst du diese hier kopieren und in deine Texte einfügen:
+        """
+    )
+    st.link_button("Emojis", "https://gist.github.com/rxaviers/7360908")
+else:
+    st.markdown(
+        """
+        Falls du dich für einen Wunsch aus der Liste entschieden hast, trage bitte deinen Namen in das entsprechende Feld ein.\n
+        Klicke anschließend auf **Speichern** am Ende dieser Seite.
+        """
+    )
 
 
 # %% Datenbank laden
@@ -93,13 +106,7 @@ if "wunschliste_df" not in st.session_state:
     
 wunschliste_df = st.session_state.wunschliste_df
 wunschliste_bearbeitet_df = wunschliste_df.copy()
-   
-
-# %% ggf. Link-Button zur Emoji-Liste anzeigen
-
-if st.session_state.edit:
-    st.link_button("Emojis", "https://gist.github.com/rxaviers/7360908")
-
+     
 
 # %% Dictionary definieren, in das ggf. die Inidzes gespeichert werden, bei denen die Namen gelöscht werden sollen
 #    Form: {index: Name, ...}
@@ -148,6 +155,9 @@ if st.session_state.edit:
         st.write("---")
 else:
     for index, zeile in wunschliste_bearbeitet_df.iterrows():
+        if zeile["Wunsch"].strip().startswith("#"):
+            continue
+        
         if nur_offene_wuensche_anzeigen and zeile["Name"].strip() != "":
             continue
         
